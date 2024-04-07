@@ -14,31 +14,66 @@ datasource db {
 }
 
 model User {
-  id      String    @id @default(uuid())
-  name String 
-  emailId String @unique
-  password String? 
+  id           String  @id @default(uuid())
+  name         String
+  emailId      String  @unique
+  password     String?
   refreshToken String?
-  photo String?
+  photo        String?
+  Poll         Poll[]
+  Survey Survey[]
 }
 
-model Quiz {
+model Poll {
+  id             String         @id @default(uuid())
+  totalQuestions Int
+  questions      PollQuestion[]
+  timer          Int
+  author         User           @relation(fields: [userId], references: [id])
+  userId         String
+  time DateTime @default(now())
+  finished Boolean @default(false)
+  roomid String?
+}
+
+model PollQuestion {
+  id       String   @id @default(uuid())
+  question String
+  option   Options? @relation("options")
+  poll     Poll     @relation(fields: [pollId], references: [id])
+  pollId   String
+}
+
+model Options {
+  id            String       @id @default(uuid())
+  a             String
+  b             String
+  c             String
+  d             String
+  correctOption Correct
+  question      PollQuestion @relation("options", fields: [questionId], references: [id])
+  questionId    String       @unique
+}
+
+model Survey {
   id String @id @default(uuid())
-  createdAt DateTime @default(now())
+  totalQuestions Int
+  questions  SurveyQuestion[]
+  author         User           @relation(fields: [userId], references: [id])
+  userId         String
+  totalParticipants Int @default(0)
+}
+model SurveyQuestion {
+  id String @id @default(uuid())
+  question String 
+  survey Survey @relation(fields: [surveyId],references: [id])
+  surveyId String
+  answers Int[]
 }
 
-model Question {
-  id             String   @id @default(uuid())
-  question       String
-  options        Option[] @relation("options")
-  correctOption  Option   @relation("correct", fields: [correctOptionId], references: [id])
-  correctOptionId String   @unique
-}
-
-model Option {
-  id              String    @id @default(uuid())
-  option          String
-  question        Question  @relation("options", fields: [optionId], references: [id])
-  optionId      String
-  correctQuestion Question? @relation("correct")
+enum Correct {
+  a
+  b
+  c
+  d
 }

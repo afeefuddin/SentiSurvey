@@ -4,8 +4,9 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { prisma, exclude } from "../utils/prisma";
 import ApiResponse from "../utils/ApiResponse";
 import jwt from "jsonwebtoken";
+import assert from "minimalistic-assert"
 
-const generateAccessToken: (
+export const generateAccessToken: (
   id: string,
   emailId: string,
   username: string
@@ -16,7 +17,7 @@ const generateAccessToken: (
       emailId,
       username,
     },
-    process.env.JWT_KEY_SECRET,
+    String(process.env.JWT_SECRET_KEY),
     {
       expiresIn: "1d",
     }
@@ -27,7 +28,7 @@ const generateRefreshToken: (id: string) => string = (id: string) => {
     {
       id,
     },
-    process.env.JWT_KEY_SECRET,
+    String(process.env.JWT_SECRET_KEY),
     {
       expiresIn: "10d",
     }
@@ -83,9 +84,10 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
   const updatedUser = await prisma.user.findFirst({
     where: { emailId },
-  });
+  }); 
 
-  const filteredUser = exclude(updatedUser, ["password", "refreshToken"]);
+  assert(updatedUser !== null)
+  const filteredUser = exclude<User,"password"| "refreshToken">(updatedUser, ["password", "refreshToken"]);
 
   const options = {
     httpOnly: true,
@@ -187,7 +189,7 @@ const googleSingup = asyncHandler(async (req: Request,res: Response)=>{
 
 const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await prisma.user.update({
-    where: { id: req.user.id },
+    where: { id: req.user!.id },
     data: { refreshToken: null },
   });
   if (!user) {
