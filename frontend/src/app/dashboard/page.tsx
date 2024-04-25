@@ -6,8 +6,20 @@ import { Button } from '@/components/ui/button'
 import { Avatar } from '@radix-ui/react-avatar'
 import React from 'react'
 import Image from 'next/image'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/redux/store'
+import { redirect } from 'next/navigation'
+import Loading from './loading'
 
 function Dashboard() {
+    const user = useSelector((state: RootState)=>state.authSlice.value.isAuthenticated)
+    const loading = useSelector((state:RootState)=>state.authSlice.loading)
+    if(loading){
+        return <Loading />
+    }
+    if(!user){
+        redirect('/login')
+    }
     return (
         <div className='flex w-screen'>
             {/* <Dashboard /> */}

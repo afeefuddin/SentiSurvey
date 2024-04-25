@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { fetchInitialData } from "./authThunk";
 
 type AuthState ={
     isAuthenticated : boolean,
@@ -7,7 +8,8 @@ type AuthState ={
 }
 
 type InitialState = {
-    value : AuthState
+    value : AuthState;
+    loading : boolean
 } 
 
 const initialState = {
@@ -15,7 +17,8 @@ const initialState = {
         isAuthenticated : false,
         username : "",
         email : ""
-    } as AuthState
+    } as AuthState,
+    loading : true,
 } as InitialState
 
 const authSlice = createSlice({
@@ -31,9 +34,18 @@ const authSlice = createSlice({
                     isAuthenticated : true,
                     username: action.payload,
                     email : "afeef",
-                }
+                },
+                loading : false
             }
         }
+    },
+    extraReducers : (builder) =>{
+        builder.addCase(fetchInitialData.pending,(state)=>{
+            state.loading = true;
+        }).addCase(fetchInitialData.fulfilled,(state,action)=>{
+            state.loading = false;
+            state.value = action.payload! 
+        })
     }
 
 })

@@ -1,7 +1,8 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button } from './ui/button'
 import Link from 'next/link'
+import {ReloadIcon} from "@radix-ui/react-icons"
 import {
     Menubar,
     MenubarCheckboxItem,
@@ -18,8 +19,13 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar"
 import JoinPoll from './join'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/redux/store'
+// import { getAuth } from 'firebase/auth'
 
 function Navbar() {
+    const isLoading = useSelector((state:RootState)=>state.authSlice.loading)
+    const isAuth = useSelector((state:RootState)=>state.authSlice.value.isAuthenticated)
     return (
         <div className='w-full px-8 py-4'>
             <div className='flex flex-row justify-between items-center'>
@@ -59,7 +65,14 @@ function Navbar() {
                         <div>How it works</div>
                     </div> */}
                 <div className='flex gap-6'>
-                    <Button>Login</Button>
+                    {
+                        isLoading && <Button>
+                            <ReloadIcon className='animate-spin' />
+                        </Button>
+                    }
+                    {
+                        !isLoading && (isAuth ? <Button>Logout</Button> : <Button>Login</Button>)
+                    }
                     <Button>Signup</Button>
                 </div>
             </div>
