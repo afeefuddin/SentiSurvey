@@ -62,6 +62,7 @@ model Survey {
   author         User           @relation(fields: [userId], references: [id])
   userId         String
   totalParticipants Int @default(0)
+  public Boolean @default(false)
 }
 model SurveyQuestion {
   id String @id @default(uuid())

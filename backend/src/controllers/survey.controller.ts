@@ -28,10 +28,16 @@ const addSurveyQuestion = asyncHandler(async (req: Request, res: Response) => {
   const checkIfPermission = await prisma.survey.findUnique({
     where: { id: surveyId, userId: user!.id },
   });
+  if(!checkIfPermission){
+    throw new Error("Survey Doesnt exist")
+  }
   const surveyQuestion = await prisma.surveyQuestion.create({
-    data: { question, survey : {
-        connect : {id : checkIfPermission!.id}
-    } },
+    data: {
+      question,
+      survey: {
+        connect: { id: checkIfPermission!.id },
+      },
+    },
   });
   res
     .status(200)

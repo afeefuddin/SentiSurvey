@@ -188,6 +188,7 @@ const googleSingup = asyncHandler(async (req: Request,res: Response)=>{
 })
 
 const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+  console.log(req.user)
   const user = await prisma.user.update({
     where: { id: req.user!.id },
     data: { refreshToken: null },
@@ -207,4 +208,10 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, {}, "User logged Out"));
 });
 
-export { registerUser, loginUser, logoutUser, googleSingup };
+const isLoggedIn = asyncHandler(async(req:Request,res:Response)=>{
+  const user = req.user
+  console.log(user)
+  res.status(200).json(new ApiResponse(200,{user},"User Is LoggedIn"))
+})
+
+export { registerUser, loginUser, logoutUser, googleSingup,isLoggedIn };
