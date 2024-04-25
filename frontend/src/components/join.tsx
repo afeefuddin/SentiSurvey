@@ -18,7 +18,7 @@ function JoinPoll() {
 
             <Dialog>
       <DialogTrigger asChild>
-        <Button >Join a Poll</Button>
+        <Button className='bg-[#ff0054]'>Join a Poll</Button>
       </DialogTrigger>
       <DialogContent className="">
         <DialogHeader>

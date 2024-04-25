@@ -66,14 +66,21 @@ function Navbar() {
                     </div> */}
                 <div className='flex gap-6'>
                     {
-                        isLoading && <Button>
+                        isLoading && <Button className='w-20'>
                             <ReloadIcon className='animate-spin' />
                         </Button>
                     }
                     {
-                        !isLoading && (isAuth ? <Button>Logout</Button> : <Button>Login</Button>)
+                        !isLoading && (isAuth ? <Button className='w-20'>Logout</Button> : <Button>Login</Button>)
                     }
-                    <Button>Signup</Button>
+                    {
+                        isLoading && <Button className='w-20'>
+                            <ReloadIcon className='animate-spin' />
+                        </Button>
+                    }
+                    {
+                        !isLoading && (isAuth ? <Button className='w-20'>Profile</Button> : <Button>SignUp</Button>)
+                    }
                 </div>
             </div>
         </div>

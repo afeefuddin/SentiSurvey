@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-   <div>
+   <div className="">
    <nav className="fixed top-0 w-full">
     <Navbar />
    </nav>

@@ -16,12 +16,16 @@ export const fetchInitialData = createAsyncThunk(
         }
         return {
             isAuthenticated : true,
-            username : resp.data.data.name,
-            email : resp.data.data.email
+            username : resp.data.data.user.name,
+            email : resp.data.data.user.email
             
         } ;
     } catch (error) {
-        
+        return {
+            isAuthenticated : false,
+            username : "",
+            email : ""
+        }
     }
   }
 );

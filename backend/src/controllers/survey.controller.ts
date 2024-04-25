@@ -5,31 +5,35 @@ import ApiResponse from "../utils/ApiResponse";
 import { ApiError } from "../utils/ApiError";
 
 const createSurvey = asyncHandler(async (req: Request, res: Response) => {
+  console.log("here")
   const user = req.user;
-  const { totalQuestions } = req.body;
-  console.log(user!.id);
-  console.log(totalQuestions);
-  // const userData = await prisma.user.findUniqueOrThrow({where : {id : user.id}})
+  console.log(user)
+  const data = req.body;
+  const totalQuestions = data.totalQuestions ?? 10
   const survey = await prisma.survey.create({
     data: {
       totalQuestions: parseInt(totalQuestions, 10),
+      name: data.name,
+      description: data.description,
       author: {
         connect: { id: user!.id },
       },
     },
   });
+
   res
     .status(200)
     .json(new ApiResponse(200, { id: survey.id }, "Survey Created"));
 });
+
 const addSurveyQuestion = asyncHandler(async (req: Request, res: Response) => {
   const { question, surveyId } = req.body;
   const user = req.user;
   const checkIfPermission = await prisma.survey.findUnique({
     where: { id: surveyId, userId: user!.id },
   });
-  if(!checkIfPermission){
-    throw new Error("Survey Doesnt exist")
+  if (!checkIfPermission) {
+    throw new Error("Survey Doesnt exist");
   }
   const surveyQuestion = await prisma.surveyQuestion.create({
     data: {
@@ -39,6 +43,7 @@ const addSurveyQuestion = asyncHandler(async (req: Request, res: Response) => {
       },
     },
   });
+
   res
     .status(200)
     .json(
@@ -46,4 +51,16 @@ const addSurveyQuestion = asyncHandler(async (req: Request, res: Response) => {
     );
 });
 
-export { createSurvey, addSurveyQuestion };
+const getUserSurvey = asyncHandler(async(req:Request,res:Response)=>{
+  const userId = req.user!.id
+  const data = await prisma.survey.findMany({
+    where : {
+      author : {
+        id : userId
+      }
+    }
+  })
+  res.status(200).json(new ApiResponse(200,data))
+})
+
+export { createSurvey, addSurveyQuestion, getUserSurvey };

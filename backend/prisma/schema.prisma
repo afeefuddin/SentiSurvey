@@ -63,6 +63,8 @@ model Survey {
   userId         String
   totalParticipants Int @default(0)
   public Boolean @default(false)
+  name String
+  description String
 }
 model SurveyQuestion {
   id String @id @default(uuid())
