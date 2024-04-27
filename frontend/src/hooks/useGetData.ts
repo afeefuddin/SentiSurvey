@@ -39,7 +39,9 @@ function useGetData(url: string) {
       const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
       const promise = axios
         .get(apiUrl + url, { withCredentials: true })
-        .then((response) => response.data.data);
+        .then((response) => response.data.data).catch((error)=>{
+          console.log(error)
+        });
       setResource(promiseWrapper(promise));
     };
 

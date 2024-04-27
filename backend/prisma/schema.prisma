@@ -22,6 +22,7 @@ model User {
   photo        String?
   Poll         Poll[]
   Survey Survey[]
+  SurveyResponse SurveyResponse[]
 }
 
 model Poll {
@@ -65,13 +66,33 @@ model Survey {
   public Boolean @default(false)
   name String
   description String
+  responses SurveyResponse[]
 }
 model SurveyQuestion {
   id String @id @default(uuid())
   question String 
   survey Survey @relation(fields: [surveyId],references: [id])
   surveyId String
-  answers Int[]
+  answers SurveyResponseAnswer[]
+}
+
+model SurveyResponseAnswer {
+  id String @id @default(uuid())
+  answer Int
+  question SurveyQuestion @relation(fields: [questionId],references: [id])
+  questionId String
+  surveyResponse SurveyResponse @relation(fields: [surveyResponseId],references: [id])
+  surveyResponseId String
+}
+
+model SurveyResponse{
+  id String @id @default(uuid())
+  answers SurveyResponseAnswer[]
+  user User @relation(fields: [userId],references: [id])
+  userId String
+  survey Survey @relation(fields: [surveyId],references: [id])
+  surveyId String
+  submitted Boolean @default(false)
 }
 
 enum Correct {

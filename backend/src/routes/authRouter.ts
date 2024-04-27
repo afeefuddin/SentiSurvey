@@ -1,16 +1,23 @@
-import { addSurveyQuestion, createSurvey, getUserSurvey } from "../controllers/survey.controller";
+import { addSurveyQuestion, createSurvey, getSurveyData, getSurveyDataBeforeCreation, getUserSurvey, publiciseStartup } from "../controllers/survey.controller";
 import { addQuestion, createPoll } from "../controllers/poll.controller";
 import { Router } from "express";
 import { isLoggedIn, logoutUser } from "../controllers/user.controller";
+import { createSurveyResponse, surveyResponseAnswers } from "../controllers/surveyResponse.controller";
 
 const authRouter = Router()
 
-// router.route('/create-a-poll').post(createPoll)
-// router.route('/add-a-question').post(addQuestion)
+// Survey Routes
 authRouter.route('/create-survey').post(createSurvey)
-authRouter.route('/surveyQuestion').post(addSurveyQuestion)
+authRouter.route('/addSurveyQuestion').post(addSurveyQuestion)
+authRouter.route('/user/survey').get(getUserSurvey)
+authRouter.route('/survey/:id').get(getSurveyDataBeforeCreation)
+authRouter.route('/survey/publicise').post(publiciseStartup)
+authRouter.route('/create-survey-response').post(createSurveyResponse)
+authRouter.route('/survey-response/submit').post(surveyResponseAnswers)
+authRouter.route('/survey/getData/:id').get(getSurveyData)
+
+// User Authentication Routes
 authRouter.route("/isLoggedIn").get(isLoggedIn)
 authRouter.route('/logout').post(logoutUser)
-authRouter.route('/user/survey').get(getUserSurvey)
 
 export {authRouter}

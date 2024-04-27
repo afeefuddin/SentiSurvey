@@ -60,7 +60,65 @@ const getUserSurvey = asyncHandler(async(req:Request,res:Response)=>{
       }
     }
   })
+  if(!data){
+    throw new ApiError(404,"Survey Not Found")
+    
+  }
   res.status(200).json(new ApiResponse(200,data))
 })
 
-export { createSurvey, addSurveyQuestion, getUserSurvey };
+const getSurveyDataBeforeCreation = asyncHandler(async(req:Request,res:Response)=>{
+  const surveyId = req.params.id
+  const userId = req.user!.id
+
+  const data = await prisma.survey.findFirst({
+    where : {
+      id : surveyId,
+      public : false,
+      userId
+    },
+    include : {
+      questions : true       
+    }
+  })
+  if(!data){
+    throw new ApiError(404,"Survey not found")
+  }
+  res.status(200).json(new ApiResponse(200,data))
+})
+
+const publiciseStartup = asyncHandler(async(req:Request,res:Response)=>{
+  const userId = req.user!.id
+  const {surveyId} = req.body
+
+  const data = await prisma.survey.update({
+    where : {
+      id : surveyId,
+      userId
+    },
+    data : {
+      public : true
+    }
+  })
+  res.status(200).json(new ApiResponse(200,data.id,"Survey Public"))
+})
+
+const getSurveyData = asyncHandler(async(req:Request,res:Response)=>{
+  const surveyId = req.params.id
+  const data = await prisma.survey.findFirst({
+    where : {
+      id : surveyId,
+      public : true,
+    },
+    include : {
+      questions : true       
+    }
+  })
+  if(!data){
+    throw new ApiError(404,"Survey not found")
+  }
+  res.status(200).json(new ApiResponse(200,data))
+
+})
+
+export { createSurvey, addSurveyQuestion, getUserSurvey,getSurveyData,getSurveyDataBeforeCreation, publiciseStartup };
