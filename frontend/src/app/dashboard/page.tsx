@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from '@/components/ui/textarea'
 import axios from 'axios'
 import SurveyList from '@/components/surveyList'
+import { Skeleton } from '@/components/ui/skeleton'
 
 
 function NameDialog() {
@@ -75,12 +76,14 @@ function Dashboard() {
         redirect('/login')
     }
     return (
-        <div className='flex w-screen'>
+        <div className='flex p-8'>
             {/* <Dashboard /> */}
             {/* <div>
                 <SideBar />
             </div> */}
-            <div className='p-8 w-full'>
+            <div className='w-full'>
+
+            <div className=' '>
                 <div className='w-full flex justify-end gap-4'>
                     <div>
                         <Button variant="outline">Upgrade</Button>
@@ -95,7 +98,7 @@ function Dashboard() {
                 <div className='text-4xl'> Welcome back <span className='text-zinc-700'>Afeefuddin</span></div>
                 <div className='mt-16'>
                     {/* main content */}
-                    <div>
+                    <div className='flex gap-8'>
 
                         <div className='w-48'>
 
@@ -105,7 +108,7 @@ function Dashboard() {
                                     alt="Photo by Drew Beamer"
                                     fill
                                     className="rounded-md object-cover"
-                                />
+                                    />
                             </AspectRatio>
                             <div className='mt-1 ml-2'>Poll</div>
                         </div>
@@ -120,7 +123,7 @@ function Dashboard() {
                                             alt="Photo by Drew Beamer"
                                             fill
                                             className="rounded-md object-cover"
-                                        />
+                                            />
                                     </AspectRatio>
                                     <div className='mt-1 ml-2'>Survey</div>
                                 </div>
@@ -129,10 +132,15 @@ function Dashboard() {
                         </Dialog>
                     </div>
                 </div>
-                <div className='mt-16'>
-                    <Suspense fallback={<div>Loading...</div>}>
+            </div>
+                <div className='mt-16 w-fit'>
+                    <div className=' text-xl mb-4'>Your Surveys</div>
+                    <Suspense fallback={<Skeleton className='w-[280px] h-[160px]'></Skeleton>}>
                         <SurveyList />
                     </Suspense>
+                </div>
+                <div className='mt-8'>
+                    <div className=' text-xl mb-4'>Your Responses</div>
                 </div>
             </div>
         </div>
