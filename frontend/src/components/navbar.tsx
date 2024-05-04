@@ -19,13 +19,25 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar"
 import JoinPoll from './join'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
+import axios from 'axios'
+import { logOut } from '@/redux/auth/authSlice'
 // import { getAuth } from 'firebase/auth'
 
 function Navbar() {
     const isLoading = useSelector((state:RootState)=>state.authSlice.loading)
     const isAuth = useSelector((state:RootState)=>state.authSlice.value.isAuthenticated)
+    const dispatch = useDispatch()
+    async function logoutUser() {
+        try {
+          const apiUrl = String(process.env.NEXT_PUBLIC_BACKEND_URL)
+            await axios.post(apiUrl+'/logout',{},{withCredentials:true})
+            dispatch(logOut())
+        } catch (error) {
+            
+        }
+    }
     return (
         <div className='w-full px-8 py-4'>
             <div className='flex flex-row justify-between items-center'>
@@ -71,7 +83,7 @@ function Navbar() {
                         </Button>
                     }
                     {
-                        !isLoading && (isAuth ? <Button className='w-20'>Logout</Button> : <Button>Login</Button>)
+                        !isLoading && (isAuth ? <Button className='w-20' onClick={logoutUser}>Logout</Button> : <Link href='/login'><Button>Login</Button></Link>)
                     }
                     {
                         isLoading && <Button className='w-20'>
@@ -79,7 +91,7 @@ function Navbar() {
                         </Button>
                     }
                     {
-                        !isLoading && (isAuth ? <Button className='w-20'>Profile</Button> : <Button>SignUp</Button>)
+                        !isLoading && (isAuth ? <Link href='/dashboard'><Button className='w-20'>Profile</Button></Link> : <Link href='/signup'><Button>SignUp</Button></Link>)
                     }
                 </div>
             </div>

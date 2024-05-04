@@ -1,13 +1,21 @@
 "use client"
 import GoogleButton from '@/components/googlesignupbutton'
 import { Button } from '@/components/ui/button'
+import { RootState } from '@/redux/store'
 import axios from 'axios'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import React, { FormEvent, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import Loading from '../dashboard/loading'
 
 function Signup() {
+  const user = useSelector((state: RootState) => state.authSlice.value.isAuthenticated)
+  const loadingData = useSelector((state: RootState) => state.authSlice.loading)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [redirectURL,setRedirectURL] = useState<string|null>(null)
+
 
   // useEffect(()=>{console.log(loading)},[loading])
   const apiUrl = String(process.env.NEXT_PUBLIC_BACKEND_URL)
@@ -34,40 +42,56 @@ function Signup() {
         {
           withCredentials: true
         })
+        setRedirectURL('/dashboard')
     } catch (error) {
       if (error instanceof Error)
         setError(error.message)
     }
     setLoading(false)
   }
+
+  useEffect(()=>{
+    if(redirectURL)
+      redirect(redirectURL)
+  },[redirectURL])
+
+  if(loadingData){
+    return <Loading />
+  }
+  if(user){
+    redirect('/dashboard')
+  }
+
   return (
     <div className=' w-screen h-screen flex justify-center items-center'>
-      <div className='rounded flex flex-col items-center px-4 py-4 border'>
-        <div className='text-2xl font-semibold mb-8'>
+      <div className='rounded flex flex-col items-center px-6 py-6 border bg-white'>
+      <div className='text-2xl font-semibold mb-4'>
+          SentiSurvey
+        </div>
+        <div className='text-lg mb-2'>
           Login
         </div>
-        <div className=' text-sm text-red-500 h-4'>{error}</div>
+        <div className=' text-sm text-red-500 h-8 text-wrap max-w-64'>{error}</div>
 
         <form onSubmit={handleLogin} className='py-4'>
-          <div className=' flex flex-col gap-6'>
-            <input type="email" placeholder='Enter the email' className='px-4 py-2 text-lg border rounded' />
-            <input type="password" placeholder=' Enter the password' className='px-2 py-1 text-lg border rounded' />
+          <div className=' flex flex-col gap-4'>
+            <input type="email" placeholder='Enter the email' className='px-3 py-1 text-lg border rounded w-[264px]' />
+            <input type="password" placeholder=' Enter the password' className='px-3 py-1 text-lg border rounded w-[264px]' />
           </div>
-          <div className='flex flex-col gap-2 mt-4 items-center'>
+          <div className='flex flex-col gap-2 mt-6 items-center'>
             {!loading ? 
-            <Button className='w-40' variant="secondary">SignIn</Button>
+            <Button className='bg-fuchsia-500 hover:bg-fuchsia-600 w-full'>SignIn</Button>
           : <Button disabled> Signing In</Button>
           }
           </div>
         </form>
         <div className="relative mb-4">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
+          <div className="relative flex items-center justify-center text-xs uppercase">
+            <span className='w-28 h-px bg-gray-300'></span>
+            <span className=" px-2 text-muted-foreground">
+              Or 
             </span>
+            <span className='w-28 h-px bg-gray-300'></span>
           </div>
         </div>
         <GoogleButton setError={setError} />

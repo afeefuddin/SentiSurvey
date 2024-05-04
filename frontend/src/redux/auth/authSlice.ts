@@ -26,7 +26,14 @@ const authSlice = createSlice({
     initialState : initialState,
     reducers : {
         logOut : ()=>{
-            return initialState
+            return {
+                value : {
+                    isAuthenticated : false,
+                    username : "",
+                    email : ""
+                } as AuthState,
+                loading : false,
+            } as InitialState
         },
         logIn : (state,action: PayloadAction<string>) =>{
             return {
